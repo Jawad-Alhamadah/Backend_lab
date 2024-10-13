@@ -1,8 +1,11 @@
 import express from "express"
 import mongoose from "mongoose"
-import Article from "./models/Article.js"
-import Book from "./models/Book.js"
 import dotenv from 'dotenv'
+import User from "./models/User.js"
+import bcrypt from "bcrypt"
+import router from "./Router/Router.js"
+
+ 
 
 dotenv.config()
 
@@ -15,74 +18,12 @@ async function startConnection() {
     console.log("connected to Mongoose")
 }
 
-
 const app = express()
 app.use(express.json())
+app.use(router)
 
 let port = 8080
 
 app.listen(port || 7000, () => console.log(`listening to ${port || 7000}`))
 
 
-app.get("/book/:id", (req, res) => {
-    let {id} = req.params
- 
-    Book.findOne({"_id":id})
-    .then(result=>res.json(result))
-
-})
-
-app.post("/book", (req, res) => {
-    let { author, title, version, publishedDate, isDigital, price, languages, catagory } = req.body
-    let book = new Book({
-        author: author || "",
-        title: title || "",
-        version: version || "",
-        publishedDate: publishedDate || "",
-        isDigital: isDigital || "",
-        price: price || "",
-        languages: languages || "",
-        catagory: catagory || ""
-    }
-    )
-    book.save()
-    .then(result=>res.json(result))
-
-})
-
-
-
-app.get("/book", (req, res) => {
-  Book.find()
-    .then(result=>res.json(result))
-
-})
-
-
-
-
-
-
-app.patch("/book/:id", (req, res) => {
-    const userId = req.params.id
-    const { author, title, version, publishedDate, isDigital, price, languages, catagory } = req.body
-    console.log(author)
-    console.log(userId)
-    const book = new Book({
-        author: author 
-    }
-    )
-   // findByIdAndUpdate(id,{author:req.body.author},{new:true})
-    Book.findByIdAndUpdate(userId,book)
-    .then(result=>res.send())
-
-})
-
-
-app.patch("/book/:id", (req, res) => {
-  let {id} =req.params
-   // findByIdAndUpdate(id,{author:req.body.author},{new:true})
-    Book.findByIdAndDelete(id,book)
-    .then(result=>res.send())
-
-})
